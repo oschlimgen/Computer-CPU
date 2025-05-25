@@ -1,0 +1,10 @@
+LUI x2 $0
+ADDI x2 x2 $18
+LUI x3 $0
+ADDI x3 x3 $36
+ADD x4 x2 x3
+SW x2 x0 $0
+SW x3 x0 $0
+SW x4 x0 $0
+EBREAK
+ADDI x0 x0 $0

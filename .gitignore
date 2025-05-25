@@ -1,0 +1,11 @@
+db/
+incremental_db/
+output_files/
+simulation/
+work/
+__pycache__/
+Computer.cr.mti
+Computer.mpf
+Computer.qpf
+Computer.qsf
+vsim.wlf
