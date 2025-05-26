@@ -2,6 +2,12 @@
 `include "BuildingBlocks/SignExtender.sv"
 
 
+/*
+ * Parses the instruction for immediates of each of the various types, and
+ *  outputs the one that matches the encoding type of the instruciton. Each
+ *  immediate is sign-extended to 32 bits, regardless of its size in the
+ *  instruction.
+ */
 module InstructionExtract(
   input logic [31:7] inst,
   input EncodingType en,
@@ -48,18 +54,14 @@ SignExtender #(21) immj_extend(
 
 // Select which immediate format to return based on the instruction encoding type
 always_comb begin
-  if(en.I)
-    imm <= immi;
-  else if(en.S)
-    imm <= imms;
-  else if(en.B)
-    imm <= immb;
-  else if(en.U)
-    imm <= immu;
-  else if(en.J)
-    imm <= immj;
-  else
-    imm <= 32'b0;
+  unique case(1'b1)
+    en.I:     imm <= immi;
+    en.S:     imm <= imms;
+    en.B:     imm <= immb;
+    en.U:     imm <= immu;
+    en.J:     imm <= immj;
+    default:  imm <= 32'b0;
+  endcase
 end
 
 endmodule

@@ -1,5 +1,16 @@
 `include "Constants/Instruction.sv"
 
+
+/*
+ * Each clock cycle, processes a single instruction. The instruction should
+ *  come from memory at the address given by the program counter. Also has
+ *  inputs and outputs for writing to and reading from memory at any given
+ *  address. Instructions follow the RISC-V format, although the CPU currently
+ *  lacks several base instructions, machine-level registers and instructions,
+ *  and exception handling methods (as described in the RISC-V specifications).
+ *  Input / output capabilities can be achieved through memory-mapped I/O
+ *  devices.
+ */
 module CentralProcessingUnit(
   input logic clock,
   input logic reset_n,
@@ -74,12 +85,13 @@ ProgramCounter pc_register(
 );
 
 
-// Create ALU module with wiring to instructions
+// Create ALU module with wiring to instructions and registers
 logic [31:0] alu_out;
 logic alu_out_b;
 
 WiringALU alu(
   .op(operation),
+  .en(encoding_type),
   .reg1(reg_read_value1),
   .reg2(reg_read_value2),
   .pc(program_counter),
@@ -93,7 +105,7 @@ WiringALU alu(
 assign reg_write_en = encoding_type.R | encoding_type.I |
                       encoding_type.U | encoding_type.J;
 
-// Assign value to write to rd
+// Assign which value to write to rd
 always_comb begin
   // Write the immediate
   if(operation.LUI) begin
@@ -124,6 +136,5 @@ assign pc_jump_en = operation.JAL | operation.JALR |
 assign memory_write_en = operation.SW;
 assign memory_address = alu_out;
 assign memory_write_value = reg_read_value2;
-
 
 endmodule

@@ -3,7 +3,7 @@ vsim -gui work.VendingMachineTop
 # Clear any current simulations
 restart -force -nowave
 destroy wave *
-add wave -unsigned {vend_cpu.registers.mem[2]} {vend_cpu.registers.mem[4]} {vend_cpu.registers.mem[5]} {vend_cpu.registers.mem[7]}
+
 # Add in waveforms
 add wave clk
 

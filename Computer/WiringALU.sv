@@ -1,7 +1,15 @@
 `include "Constants/Instruction.sv"
 
+
+/*
+ * Converts elements of the instruction into ALU operations to perform. Chooses
+ *  an ALU operation based on the instruction operation, and chooses operands
+ *  for the operation based on the encoding type of the instruction. The
+ *  outputs of the ALU aren't modified by this module.
+ */
 module WiringALU(
   input InstructionSet op,
+  input EncodingType en,
   input logic [31:0] reg1,
   input logic [31:0] reg2,
   input logic [31:0] pc,
@@ -46,31 +54,33 @@ assign alu_op.SLT_B = op.BLT | op.BGE;
 assign alu_op.SLTU_B = op.BLTU | op.BGEU;
 assign alu_op.SEQ_B = op.BEQ | op.BNE;
 
+// Define ALU inputs based on the instruction encoding type
+logic reg_and_reg;
+logic reg_and_imm;
+logic pc_and_imm;
+assign reg_and_reg = en.R;
+assign reg_and_imm = en.I | en.S;
+assign pc_and_imm = en.B | en.U | en.J;
+
 // Assign ALU primary inputs
 always_comb begin
-  // Program Counter & Immediate
-  if(op.AUIPC || op.JAL || op.BEQ || op.BNE ||
-      op.BLT || op.BLTU || op.BGE || op.BGEU) begin
-    in1 <= pc;
-    in2 <= imm;
-  end
-  // Register & Immediate
-  else if(op.ADDI || op.SLLI || op.SLTI || op.SLTIU ||
-          op.XORI || op.SRLI || op.SRAI || op.ORI ||
-          op.ANDI || op.JALR || op.SW || op.LW) begin
-    in1 <= reg1;
-    in2 <= imm;
-  end
-  // Register & Register
-  else begin
-    in1 <= reg1;
-    in2 <= reg2;
-  end
+  // Select first input
+  unique case(1'b1)
+    reg_and_reg, reg_and_imm: in1 <= reg1;
+    pc_and_imm:               in1 <= pc;
+    default:                  in1 <= 32'b0;
+  endcase
+
+  // Select second input
+  unique case(1'b1)
+    reg_and_reg:              in2 <= reg2;
+    reg_and_imm, pc_and_imm:  in2 <= imm;
+    default:                  in2 <= 32'b0;
+  endcase
 end
 
 // Assign ALU secondary inputs as always Register & Register
 assign in1_b = reg1;
 assign in2_b = reg2;
-
 
 endmodule

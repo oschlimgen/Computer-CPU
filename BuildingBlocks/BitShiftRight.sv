@@ -2,6 +2,12 @@
 `define BUILDINGBLOCK_BITSHIFTRIGHT
 
 
+/*
+ * Shifts an input right by some fixed amount, filling new bits with the value
+ *  given as an input. Additionally has an enable input to determine if the
+ *  shift should occur or the original input should be outputted without
+ *  modification.
+ */
 module BitShiftRightLayer #(parameter int WIDTH, parameter int AMOUNT)(
   input logic [WIDTH-1:0] in,
   input logic enable,
@@ -29,6 +35,12 @@ end
 endmodule
 
 
+/*
+ * Performs a bitwise shift on the 32-bit input by an amount given by another
+ *  input. Does so by shifting the input by powers of two corresponding to the
+ *  bits of the shift amount input. Each sequential power-of-two shift is
+ *  enabled by that bit of the shift amount.
+ */
 module BitShiftRight(
   input logic [31:0] in,
   input logic [4:0] amount,

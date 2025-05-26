@@ -64,7 +64,9 @@ assign {sum_overflow, sum} = in1 + neg_in2 + subtract;
 assign sign_in1 = in1[31];
 assign sign_in2 = in2[31];
 assign adjusted_overflow = sum_overflow ^ subtract;
-assign signed_comp = (sign_in1 & ~sign_in2) | (sign_in1 & adjusted_overflow) | (~sign_in2 & adjusted_overflow);
+assign signed_comp =  (sign_in1 & ~sign_in2) |
+                      (sign_in1 & adjusted_overflow) |
+                      (~sign_in2 & adjusted_overflow);
 
 // Compute logical / arithmetic shifts
 assign shift_dist = in2[4:0];
@@ -86,47 +88,35 @@ BitShiftRight right_shifter(
 assign sign_in1_b = in1_b[31];
 assign sign_in2_b = in2_b[31];
 assign unsigned_comp_b = (in1_b < in2_b);
-assign signed_comp_b = (sign_in1_b & ~sign_in2_b) | (sign_in1_b & unsigned_comp_b) | (~sign_in2_b & unsigned_comp_b);
+assign signed_comp_b =  (sign_in1_b & ~sign_in2_b) |
+                        (sign_in1_b & unsigned_comp_b) |
+                        (~sign_in2_b & unsigned_comp_b);
 assign equal_b = (in1_b == in2_b);
 
 
 // Select primary output based on requested operation
 always_comb begin
-  if(op.ADD)
-    out <= sum;
-  else if(op.SUB)
-    out <= sum;
-  else if(op.SLL)
-    out <= left_shift;
-  else if(op.SLT)
-    out <= {31'b0, signed_comp};
-  else if(op.SLTU)
-    out <= {31'b0, adjusted_overflow};
-  else if(op.XOR)
-    out <= bitwise_xor;
-  else if(op.SRL)
-    out <= right_shift;
-  else if(op.SRA)
-    out <= right_shift;
-  else if(op.OR)
-    out <= bitwise_or;
-  else if(op.AND)
-    out <= bitwise_and;
-  else
-    out <= 32'b0;
+  unique case(1'b1)
+    op.ADD, op.SUB: out <= sum;
+    op.SLL:         out <= left_shift;
+    op.SLT:         out <= {31'b0, signed_comp};
+    op.SLTU:        out <= {31'b0, adjusted_overflow};
+    op.XOR:         out <= bitwise_xor;
+    op.SRL, op.SRA: out <= right_shift;
+    op.OR:          out <= bitwise_or;
+    op.AND:         out <= bitwise_and;
+    default:        out <= 32'b0;
+  endcase
 end
 
 // Select secondary output
 always_comb begin
-  if(op.SLT_B)
-    out_b <= signed_comp_b;
-  else if(op.SLTU_B)
-    out_b <= unsigned_comp_b;
-  else if(op.SEQ_B)
-    out_b <= equal_b;
-  else
-    out_b <= 1'b0;
+  unique case(1'b1)
+    op.SLT_B:   out_b <= signed_comp_b;
+    op.SLTU_B:  out_b <= unsigned_comp_b;
+    op.SEQ_B:   out_b <= equal_b;
+    default:    out_b <= 1'b0;
+  endcase
 end
 
 endmodule
-

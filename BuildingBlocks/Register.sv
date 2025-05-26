@@ -1,6 +1,11 @@
 `ifndef BUILDINGBLOCK_REGISTER
 `define BUILDINGBLOCK_REGISTER
 
+
+/*
+ * Defines a simple register with active-low reset and active-high enable
+ *  pins.
+ */
 module Register #(parameter int WIDTH)(
   input logic clk,
   input logic reset_n,

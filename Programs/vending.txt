@@ -19,17 +19,16 @@ lw inputs x0 $4 // get inputs from memory address 0x4
 // ---------- Main Loop ---------------
 .main:
 // Setup step
+addi outputs x0 $0 // clear outputs
 andi input_money inputs $15 // get money bits
-// Add input money
 add money money input_money // add input money to stored money
-// Check for vending and refund
-bge money vending_item_cost .vending // branch to vending if money > cost
-addi outputs x0 $0 // clear outputs since not vending (vending branch sets vend bit)
+// Check for refund
 bne inputs input_money .refund_set // branch to set refund if user requested a refund (there were bits set other than money inputs)
 bne refund_mode x0 .refund_mode // branch to refund if in refund mode
 nop // Clock alignment
 nop // Clock alignment
 nop // Clock alignment
+bge money vending_item_cost .vending // branch to vending if money > cost
 nop // Clock alignment
 nop // Clock alignment
 nop // Clock alignment
@@ -41,15 +40,21 @@ sw outputs x0 $8 // write outputs to memory address 0x8
 lw inputs x0 $4 // read inputs from memory address 0x4
 jal x0 .main // jump to the beginning of the loop
 
-// --------- Refund Branches -----------
+// --------- Vending Branch ------------
 .vending: // Jumps here if user has enough money for vending
 addi outputs x0 $16 // set vend output bit to 1
 sub money money vending_item_cost // charge cost when vending
+addi refund_mode x0 $1 // enter refund mode next clock cycle
+jal x0 .write_outputs // go back to main loop
+
+// --------- Refund Branches -----------
 .refund_set: // Jumps here if user requested a refund
 addi refund_mode x0 $1 // set refund mode to true
 .refund_mode: // Jumps here if in refund mode
 bge money dime_value .refund_dime // If posssible to refund a dime, do so
 bge money nickel_value .refund_nickel // Check if possible to refund nickel
+nop // Clock alignment
+nop // Clock alignment
 nop // Clock alignment
 nop // Clock alignment
 beq money x0 .disable_refund_mode // Branch to disabling refund mode if all money has been refunded
@@ -64,5 +69,7 @@ jal x0 .return_to_main_write
 or outputs outputs nickel_value // Write a nickel refund to the vending machine output, preserving the vend bit
 sub money money nickel_value // Subtract a nickel from the stored money on the refund
 .return_to_main_write:
+nop // Clock alignment
+nop // Clock alignment
 beq money x0 .disable_refund_mode // Branch to disabling refund mode if all money has been refunded
 jal x0 .write_outputs // Money hasn't been fully refunded, don't disable refund mode

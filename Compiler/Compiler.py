@@ -42,7 +42,7 @@ def main():
     compiled = open('Programs/' + fileName.replace(PROGRAM_EXTENSION,'.sv'), 'w')
     programName = fileName.replace(PROGRAM_EXTENSION,'').replace(' ','_').upper()
     compiled.write('`ifndef {name}\n`define {name}\n\n'.format(name = 'PROGRAM_' + programName))
-    compiled.write('parameter [31:0] INSTRUCTIONS_{}[0:{}] = {{\n'.format(programName, len(toWrite)-1))
+    compiled.write('parameter bit [31:0] INSTRUCTIONS_{}[0:{}] = \'{{\n'.format(programName, len(toWrite)-1))
     for i, binary in enumerate(toWrite):
       compiled.write(('' if i == 0 else ',\n') + f"  32'b{binary}")
     compiled.write('\n};\n\n`endif')

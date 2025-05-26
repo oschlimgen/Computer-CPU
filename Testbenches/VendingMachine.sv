@@ -2,6 +2,10 @@
 `include "Programs/vending.sv"
 
 
+/*
+ * Uses the CPU module and a set of instructions to control vending machine
+ *  functionality. The vending machine inputs and outputs are memory-mapped.
+ */
 module VendingMachineTop(
   input logic clk,
   input logic reset,
