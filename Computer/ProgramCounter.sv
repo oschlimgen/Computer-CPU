@@ -26,14 +26,14 @@ assign pc_incr = pc + 4;
 logic [31:0] next_pc;
 always_comb begin
   if(jump_en) begin
-    next_pc <= jump_to;
+    next_pc = jump_to;
   end else begin
-    next_pc <= pc_incr;
+    next_pc = pc_incr;
   end
 end
 
 // Create the register to hold the program counter
-Register #(32) program_counter(
+Register #(.WIDTH(32)) program_counter(
   .clk(clk),
   .reset_n(reset_n),
   .enable(pc_enable),

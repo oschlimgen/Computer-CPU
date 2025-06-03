@@ -11,10 +11,12 @@ module VendingMachineTop(
   input logic reset,
   input logic nickel,
   input logic dime,
+  input logic quarter,
   input logic refund,
   output logic vend,
   output logic nickel_out,
-  output logic dime_out
+  output logic dime_out,
+  output logic quarter_out
 );
 
 logic clock_1Hz; // 1Hz clock signal to add as a waveform for display
@@ -51,12 +53,9 @@ assign instruction_index = program_counter[31:2];
 assign instruction = INSTRUCTIONS_VENDING[instruction_index];
 
 // Map vending machine inputs to CPU memory read input
-assign memory_read_value[0] = nickel; // Nickel has a cent value of 5 = 0b0101 -> bits[0] high
-assign memory_read_value[1] = dime; // Dime has a cent value of 5 = 0b1010 -> bits[1] high
-assign memory_read_value[2] = nickel; // Nickel has a cent value of 5 = 0b0101 -> bits[2] high
-assign memory_read_value[3] = dime; // Dime has a cent value of 5 = 0b1010 -> bits[3] high
-assign memory_read_value[4] = refund; // Assign refund bit to be bits[4]
-assign memory_read_value[31:5] = '0; // All the other bits should be zero
+assign memory_read_value[5:0] = (nickel ? 5 : 0) + (dime ? 10 : 0) + (quarter ? 25 : 0);
+assign memory_read_value[30:6] = '0; // All the other bits should be zero
+assign memory_read_value[31] = refund;
 
 // Create the vending machine cpu unit
 CentralProcessingUnit vend_cpu(
@@ -74,10 +73,12 @@ CentralProcessingUnit vend_cpu(
 // Parse CPU memory write output for vending machine outputs
 logic nickel_out_mapping;
 logic dime_out_mapping;
+logic quarter_out_mapping;
 logic vend_mapping;
-assign nickel_out_mapping = memory_write_value[0] & memory_write_value[2];
-assign dime_out_mapping = memory_write_value[1] & memory_write_value[3];
-assign vend_mapping = memory_write_value[4];
+assign nickel_out_mapping = memory_write_value[2] & memory_write_value[0];
+assign dime_out_mapping = memory_write_value[3] & memory_write_value[1];
+assign quarter_out_mapping = memory_write_value[4] & memory_write_value[3] & memory_write_value[0];
+assign vend_mapping = memory_write_value[31];
 
 // Only adjust outputs when a write to memory instruction is recieved from the CPU.
 //    Otherwise, should store the previous value. The CPU should write to memory once
@@ -86,11 +87,13 @@ always_ff @(posedge clk, posedge reset) begin
   if(reset) begin
     nickel_out <= '0;
     dime_out <= '0;
+    quarter_out <= '0;
     vend <= '0;
   end else begin
     if(memory_write_en) begin
       nickel_out <= nickel_out_mapping;
       dime_out <= dime_out_mapping;
+      quarter_out <= quarter_out_mapping;
       vend <= vend_mapping;
     end
   end

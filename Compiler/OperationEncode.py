@@ -12,11 +12,12 @@ def encode(string: str) -> str:
   
   inst_numeric = [inst[0]] + list(map(_convertToNumber, inst[1:]))
   binaryInst = _createInstruction(inst_numeric)
-  return format(binaryInst, '032b')
+  binaryString = format(binaryInst, '032b')
+  return binaryString
 
 
 def _convertToNumber(num: str) -> int:
-  return int(num.lstrip('x$'))
+  return int(num.lstrip('x$'), base=0)
 
 def _createInstruction(inst: list[int]) -> int:
   op = OperationDefinitions.OPERATIONS[inst[0]]
@@ -94,6 +95,7 @@ def _checkArguments(inst: list[str]) -> str | None:
   for i, size in enumerate(sizes):
     param = inst[i+1]
     if type(size) is str:
+      # Parameter is a register - designated by a string for size in ARGUMENT_SIZES
       try:
         reg = int(param.lstrip('x'))
       except:
@@ -101,14 +103,13 @@ def _checkArguments(inst: list[str]) -> str | None:
       if reg < 0 or reg >= 32:
         return f'Parameter #{i+1}: Registers numbers must be between 0 and 31'
     else:
-      # if param[0] != '$':
-      #   return f"Parameter #{i+1} of {inst[0]} must be a constant prepended by '$'"
+      # Parameter is a constant - designated by a number or object for size in ARGUMENT_SIZES
       try:
-        num = int(param.lstrip('$'))
+        num = int(param.lstrip('$'), base=0)
       except:
         return f'Parameter #{i+1} of {inst[0]} must be a constant number'
       if type(size) is int:
-        if num < -2**(size-1) or num > 2**(size-1)-1:
+        if num < 0 or num > 2**size - 1: # Not accepting negative numbers could be an issue
           return f'Parameter #{i+1} of {inst[0]} can only be {size} bits wide'
       elif size.get('max') and size.get('min'):
         if num < -2**(size.get('max')-1) or num > 2**(size.get('max')-1)-1:

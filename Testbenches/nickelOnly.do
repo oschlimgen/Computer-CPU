@@ -30,6 +30,7 @@ force sim:/VendingMachineTop/clk 0 0,1 31.25ms -repeat 62.5ms
 #Set initial input values
 force sim:/VendingMachineTop/nickel 0
 force sim:/VendingMachineTop/dime 0
+force sim:/VendingMachineTop/quarter 0
 force sim:/VendingMachineTop/refund 0
 
 # Force asynchronous reset for 10pS and run for 100ps more. 

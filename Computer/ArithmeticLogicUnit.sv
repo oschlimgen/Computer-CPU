@@ -97,25 +97,25 @@ assign equal_b = (in1_b == in2_b);
 // Select primary output based on requested operation
 always_comb begin
   unique case(1'b1)
-    op.ADD, op.SUB: out <= sum;
-    op.SLL:         out <= left_shift;
-    op.SLT:         out <= {31'b0, signed_comp};
-    op.SLTU:        out <= {31'b0, adjusted_overflow};
-    op.XOR:         out <= bitwise_xor;
-    op.SRL, op.SRA: out <= right_shift;
-    op.OR:          out <= bitwise_or;
-    op.AND:         out <= bitwise_and;
-    default:        out <= 32'b0;
+    op.ADD, op.SUB: out = sum;
+    op.SLL:         out = left_shift;
+    op.SLT:         out = {31'b0, signed_comp};
+    op.SLTU:        out = {31'b0, adjusted_overflow};
+    op.XOR:         out = bitwise_xor;
+    op.SRL, op.SRA: out = right_shift;
+    op.OR:          out = bitwise_or;
+    op.AND:         out = bitwise_and;
+    default:        out = 32'b0;
   endcase
 end
 
 // Select secondary output
 always_comb begin
   unique case(1'b1)
-    op.SLT_B:   out_b <= signed_comp_b;
-    op.SLTU_B:  out_b <= unsigned_comp_b;
-    op.SEQ_B:   out_b <= equal_b;
-    default:    out_b <= 1'b0;
+    op.SLT_B:   out_b = signed_comp_b;
+    op.SLTU_B:  out_b = unsigned_comp_b;
+    op.SEQ_B:   out_b = equal_b;
+    default:    out_b = 1'b0;
   endcase
 end
 

@@ -16,10 +16,12 @@ add wave clock_1Hz
 add wave reset
 add wave nickel
 add wave dime
+add wave quarter
 add wave refund
 add wave vend
 add wave nickel_out
 add wave dime_out
+add wave quarter_out
 
 
 #Create a repeating clock of 1S
@@ -32,6 +34,7 @@ force clk 0 0,1 31.25ms -repeat 62.5ms
 #Set initial input values
 force nickel 0
 force dime 0
+force quarter 0
 force refund 0
 
 # Force asynchronous reset for 10pS and run for 100ps more. 
@@ -46,16 +49,40 @@ force nickel 1
 run 5000ms
 force nickel 0
 run 1000ms
+force quarter 1
+run 1000ms
+force quarter 0
+run 3000ms
+
+# Test vending with quarter (should vend and output dime nickel)
 force dime 1
 run 1000ms
 force dime 0
-run 3000ms
+force nickel 1
+run 1000ms
+force nickel 0
+force quarter 1
+run 2000ms
+force quarter 0
+run 4000ms
 
 # Check refund with continuous coin input
 force dime 1
 run 2000ms
 force dime 0
 force nickel 1
+force refund 1
+run 1000ms
+force refund 0
+run 2000ms
+force nickel 0
+run 3000ms
+
+# Check refund with continuous coin input
+force quarter 1
+run 1000ms
+force quarter 0
+force dime 1
 force refund 1
 run 1000ms
 force refund 0

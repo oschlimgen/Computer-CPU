@@ -54,7 +54,7 @@ assign layer[0] = in;
 generate
   genvar i;
   for(i = 0; i < 5; i++) begin : shift_layers
-    BitShiftRightLayer #(32, 2 ** i) shifter(
+    BitShiftRightLayer #(.WIDTH(32), .AMOUNT(2 ** i)) shifter(
       .in(layer[i]),
       .enable(amount[i]),
       .fill_value(fill_value),

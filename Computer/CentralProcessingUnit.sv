@@ -1,3 +1,7 @@
+`ifndef COMPUTER_CENTRALPROCESSINGUNIT
+`define COMPUTER_CENTRALPROCESSINGUNIT
+
+
 `include "Constants/Instruction.sv"
 
 
@@ -19,8 +23,8 @@ module CentralProcessingUnit(
   // Interface with memory
   output logic memory_write_en,
   output logic [31:0] memory_address,
-  input logic [31:0] memory_read_value,
-  output logic [31:0] memory_write_value
+  output logic [31:0] memory_write_value,
+  input logic [31:0] memory_read_value
 );
 
 // Create instruction decoding modules
@@ -109,19 +113,20 @@ assign reg_write_en = encoding_type.R | encoding_type.I |
 always_comb begin
   // Write the immediate
   if(operation.LUI) begin
-    reg_write_value <= instruction_imm;
+    reg_write_value = instruction_imm;
   end
   // Write the link value from program counter
-  else if(operation.JAL || operation.JALR) begin
-    reg_write_value <= pc_link_value;
+  else if(operation.JAL | operation.JALR) begin
+    reg_write_value = pc_link_value;
   end
   // Write to a register from memory for load instructions
-  else if(operation.LW) begin
-    reg_write_value <= memory_read_value;
+  else if(operation.LW | operation.LH | operation.LB |
+          operation.LHU | operation.LBU) begin
+    reg_write_value = memory_read_value;
   end
   // Write ALU output
   else begin
-    reg_write_value <= alu_out;
+    reg_write_value = alu_out;
   end
 end
 
@@ -133,8 +138,10 @@ assign pc_jump_en = operation.JAL | operation.JALR |
                     (operation.BGE & ~alu_out_b) | (operation.BGEU & ~alu_out_b);
 
 // Control writing to memory
-assign memory_write_en = operation.SW;
+assign memory_write_en = operation.SW | operation.SH | operation.SB;
 assign memory_address = alu_out;
 assign memory_write_value = reg_read_value2;
 
 endmodule
+
+`endif

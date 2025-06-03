@@ -39,7 +39,7 @@ ArithmeticLogicUnit alu(
 // Assign ALU primary operation based on instruction operation
 assign alu_op.ADD = op.ADD | op.ADDI | op.AUIPC | op.JAL | op.JALR |
                     op.BEQ | op.BNE | op.BLT | op.BLTU | op.BGE | op.BGEU |
-                    op.SW | op.LW;
+                    op.SW | op.SH | op.SB | op.LW | op.LH | op.LB | op.LHU | op.LBU;
 assign alu_op.SUB = op.SUB;
 assign alu_op.SLL = op.SLL | op.SLLI;
 assign alu_op.SLT = op.SLT | op.SLTI;
@@ -66,16 +66,16 @@ assign pc_and_imm = en.B | en.U | en.J;
 always_comb begin
   // Select first input
   unique case(1'b1)
-    reg_and_reg, reg_and_imm: in1 <= reg1;
-    pc_and_imm:               in1 <= pc;
-    default:                  in1 <= 32'b0;
+    reg_and_reg, reg_and_imm: in1 = reg1;
+    pc_and_imm:               in1 = pc;
+    default:                  in1 = 32'b0;
   endcase
 
   // Select second input
   unique case(1'b1)
-    reg_and_reg:              in2 <= reg2;
-    reg_and_imm, pc_and_imm:  in2 <= imm;
-    default:                  in2 <= 32'b0;
+    reg_and_reg:              in2 = reg2;
+    reg_and_imm, pc_and_imm:  in2 = imm;
+    default:                  in2 = 32'b0;
   endcase
 end
 

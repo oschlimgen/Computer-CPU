@@ -40,14 +40,14 @@ assign value_read2 = all_registers[address_read2]; // Second read
 logic [31:0] write;
 always_comb begin
   // Write enable decoder to select register to write to
-  write <= '0;
-  write[address_write] <= write_enable;
+  write = '0;
+  write[address_write] = write_enable;
 end
 
 // Create 31 general-purpose registers x1 to x31
 generate
   for(i = 1; i < 32; i++) begin : registers
-    Register #(32) register(
+    Register #(.WIDTH(32)) register(
       .clk(clk),
       .reset_n(reset_n),
       .enable(write[i]),

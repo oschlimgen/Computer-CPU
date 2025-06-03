@@ -55,12 +55,12 @@ SignExtender #(21) immj_extend(
 // Select which immediate format to return based on the instruction encoding type
 always_comb begin
   unique case(1'b1)
-    en.I:     imm <= immi;
-    en.S:     imm <= imms;
-    en.B:     imm <= immb;
-    en.U:     imm <= immu;
-    en.J:     imm <= immj;
-    default:  imm <= 32'b0;
+    en.I:     imm = immi;
+    en.S:     imm = imms;
+    en.B:     imm = immb;
+    en.U:     imm = immu;
+    en.J:     imm = immj;
+    default:  imm = 32'b0;
   endcase
 end
 
