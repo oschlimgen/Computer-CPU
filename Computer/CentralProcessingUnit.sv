@@ -1,9 +1,11 @@
-`ifndef COMPUTER_CENTRALPROCESSINGUNIT
-`define COMPUTER_CENTRALPROCESSINGUNIT
-
+`ifndef COMPUTER_CENTRALPROCESSINGUNIT_SV
+`define COMPUTER_CENTRALPROCESSINGUNIT_SV
 
 `include "Constants/Instruction.sv"
-
+`include "Computer/InstructionDecoder.sv"
+`include "Computer/Registers.sv"
+`include "Computer/ProgramCounter.sv"
+`include "Computer/WiringALU.sv"
 
 /*
  * Each clock cycle, processes a single instruction. The instruction should
@@ -21,8 +23,9 @@ module CentralProcessingUnit(
   input logic [31:0] instruction,
   output logic [31:0] program_counter,
   // Interface with memory
-  output logic memory_write_en,
   output logic [31:0] memory_address,
+  output logic [1:0] memory_read_write_size,
+  output logic memory_write_enable,
   output logic [31:0] memory_write_value,
   input logic [31:0] memory_read_value
 );
@@ -41,16 +44,11 @@ InstructionDecoder decoder(
   .inst(instruction),
   .en(encoding_type),
   .op(operation),
-  .illegal(error_illegal_instruction)
-);
-
-InstructionExtract extractor(
-  .inst(instruction[31:7]),
-  .en(encoding_type),
   .rd(instruction_rd),
   .rs1(instruction_rs1),
   .rs2(instruction_rs2),
-  .imm(instruction_imm)
+  .imm(instruction_imm),
+  .illegal(error_illegal_instruction)
 );
 
 
@@ -138,7 +136,7 @@ assign pc_jump_en = operation.JAL | operation.JALR |
                     (operation.BGE & ~alu_out_b) | (operation.BGEU & ~alu_out_b);
 
 // Control writing to memory
-assign memory_write_en = operation.SW | operation.SH | operation.SB;
+assign memory_write_enable = operation.SW | operation.SH | operation.SB;
 assign memory_address = alu_out;
 assign memory_write_value = reg_read_value2;
 

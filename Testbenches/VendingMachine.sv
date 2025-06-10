@@ -42,8 +42,9 @@ assign clock_1Hz = ~clock_count[3];
 logic [31:0] instruction;
 logic [31:0] program_counter;
 // CPU interface with memory
-logic memory_write_en;
 logic [31:0] memory_address;
+logic [1:0] memory_read_write_size;
+logic memory_write_enable;
 logic [31:0] memory_read_value; // Needs to be driven
 logic [31:0] memory_write_value;
 
@@ -63,7 +64,8 @@ CentralProcessingUnit vend_cpu(
   .reset_n(~reset),
   .instruction(instruction),
   .program_counter(program_counter),
-  .memory_write_en(memory_write_en),
+  .memory_write_enable(memory_write_enable),
+  .memory_read_write_size(memory_read_write_size),
   .memory_address(memory_address),
   .memory_read_value(memory_read_value),
   .memory_write_value(memory_write_value)
@@ -90,7 +92,7 @@ always_ff @(posedge clk, posedge reset) begin
     quarter_out <= '0;
     vend <= '0;
   end else begin
-    if(memory_write_en) begin
+    if(memory_write_enable) begin
       nickel_out <= nickel_out_mapping;
       dime_out <= dime_out_mapping;
       quarter_out <= quarter_out_mapping;

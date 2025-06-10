@@ -1,3 +1,6 @@
+`ifndef COMPUTER_REGISTERS_SV
+`define COMPUTER_REGISTERS_SV
+
 `include "BuildingBlocks/Register.sv"
 
 /*
@@ -58,3 +61,5 @@ generate
 endgenerate
 
 endmodule
+
+`endif

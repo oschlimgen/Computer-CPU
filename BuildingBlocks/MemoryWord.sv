@@ -1,7 +1,5 @@
-`ifndef BUILDINGBLOCK_MEMORYWORD
-`define BUILDINGBLOCK_MEMORYWORD
-
-`include "BuildingBlocks/Register.sv"
+`ifndef BUILDINGBLOCK_MEMORYWORD_SV
+`define BUILDINGBLOCK_MEMORYWORD_SV
 
 
 module MemoryWord(
@@ -10,7 +8,7 @@ module MemoryWord(
   input logic address_enable,
   input logic [3:0] write_enable,
   input logic [31:0] write_value,
-  inout logic [31:0] read_value
+  output logic [31:0] read_value
 );
 
 logic [31:0] value;
@@ -32,7 +30,7 @@ generate
   end
 endgenerate
 
-assign read_value = (address_enable ? value : {32{1'bZ}});
+assign read_value = value;
 
 endmodule
 

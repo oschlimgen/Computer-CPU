@@ -1,3 +1,6 @@
+`ifndef COMPUTER_WIRINGALU_SV
+`define COMPUTER_WIRINGALU_SV
+
 `include "Constants/Instruction.sv"
 
 
@@ -84,3 +87,5 @@ assign in1_b = reg1;
 assign in2_b = reg2;
 
 endmodule
+
+`endif

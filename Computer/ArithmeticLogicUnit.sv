@@ -1,3 +1,7 @@
+`ifndef COMPUTER_ARITHMETICLOGICUNIT_SV
+`define COMPUTER_ARITHMETICLOGICUNIT_SV
+
+
 `include "Constants/Instruction.sv"
 `include "BuildingBlocks/BitShiftLeft.sv"
 `include "BuildingBlocks/BitShiftRight.sv"
@@ -120,3 +124,5 @@ always_comb begin
 end
 
 endmodule
+
+`endif

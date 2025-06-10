@@ -1,4 +1,8 @@
+`ifndef COMPUTER_INSTRUCTIONDECODER_SV
+`define COMPUTER_INSTRUCTIONDECODER_SV
+
 `include "Constants/Instruction.sv"
+`include "Computer/ImmediateExtract.sv"
 
 
 /*
@@ -12,7 +16,21 @@ module InstructionDecoder(
   input logic [31:0] inst,
   output EncodingType en,
   output InstructionSet op,
+  output logic [4:0] rd,
+  output logic [4:0] rs1,
+  output logic [4:0] rs2,
+  output logic [31:0] imm,
   output logic illegal
+);
+
+// Get the immediate and register addresses
+ImmediateExtract extractor(
+  .inst(inst[31:7]),
+  .en(en),
+  .rd(rd),
+  .rs1(rs1),
+  .rs2(rs2),
+  .imm(imm)
 );
 
 // Parse out parts of instruction that specify its type
@@ -219,3 +237,5 @@ always_comb begin
 end
 
 endmodule
+
+`endif

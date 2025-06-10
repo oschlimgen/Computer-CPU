@@ -7,7 +7,7 @@ destroy wave *
 
 # Add current waveforms
 add wave clk
-add wave -unsigned write_enable
+add wave -unsigned read_write_size write_enable
 add wave -hexadecimal address write_value read_value
 
 run -all

@@ -1,3 +1,6 @@
+`ifndef COMPUTER_IMMEDIATEEXTRACT_SV
+`define COMPUTER_IMMEDIATEEXTRACT_SV
+
 `include "Constants/Instruction.sv"
 `include "BuildingBlocks/SignExtender.sv"
 
@@ -8,7 +11,7 @@
  *  immediate is sign-extended to 32 bits, regardless of its size in the
  *  instruction.
  */
-module InstructionExtract(
+module ImmediateExtract(
   input logic [31:7] inst,
   input EncodingType en,
   output logic [4:0] rd,
@@ -65,3 +68,5 @@ always_comb begin
 end
 
 endmodule
+
+`endif

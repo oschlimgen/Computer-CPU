@@ -1,3 +1,6 @@
+`ifndef COMPUTER_PROGRAMCOUNTER_SV
+`define COMPUTER_PROGRAMCOUNTER_SV
+
 `include "BuildingBlocks/Register.sv"
 
 
@@ -47,3 +50,5 @@ Register #(.WIDTH(32)) program_counter(
 assign link_value = pc_incr;
 
 endmodule
+
+`endif
